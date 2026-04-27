@@ -42,14 +42,22 @@ router.post('/login', async (req, res) => {
       role: user.role
     };
 
-    // Redirect based on role
-    const role = user.role;
-    if (role === 'admin') return res.redirect('/admin/dashboard');
-    if (role === 'teacher') return res.redirect('/teacher/dashboard');
-    if (role === 'student') return res.redirect('/student/dashboard');
-    if (role === 'parent') return res.redirect('/parent/dashboard');
-    
-    res.redirect('/');
+    // Persist session before redirecting in hosted/proxied environments.
+    req.session.save((saveErr) => {
+      if (saveErr) {
+        console.error('Session save error:', saveErr);
+        return res.render('auth/login', { error: 'An error occurred. Please try again.' });
+      }
+
+      // Redirect based on role
+      const role = user.role;
+      if (role === 'admin') return res.redirect('/admin/dashboard');
+      if (role === 'teacher') return res.redirect('/teacher/dashboard');
+      if (role === 'student') return res.redirect('/student/dashboard');
+      if (role === 'parent') return res.redirect('/parent/dashboard');
+
+      return res.redirect('/');
+    });
   } catch (error) {
     console.error('Login error:', error);
     res.render('auth/login', { error: 'An error occurred. Please try again.' });
