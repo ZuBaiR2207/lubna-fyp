@@ -1,0 +1,52 @@
+<%- include('../partials/header', { title: 'User Management - SLMS' }) %>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>User Management</h2>
+            <div class="action-buttons">
+                <a href="/admin/users/create" class="btn btn-primary">Create New User</a>
+            </div>
+        </div>
+
+        <div style="margin-bottom: 1rem;">
+            <a href="/admin/users" class="btn <%= !selectedRole ? 'btn-primary' : 'btn-sm' %>">All</a>
+            <a href="/admin/users?role=admin" class="btn <%= selectedRole === 'admin' ? 'btn-primary' : 'btn-sm' %>">Admins</a>
+            <a href="/admin/users?role=teacher" class="btn <%= selectedRole === 'teacher' ? 'btn-primary' : 'btn-sm' %>">Teachers</a>
+            <a href="/admin/users?role=student" class="btn <%= selectedRole === 'student' ? 'btn-primary' : 'btn-sm' %>">Students</a>
+            <a href="/admin/users?role=parent" class="btn <%= selectedRole === 'parent' ? 'btn-primary' : 'btn-sm' %>">Parents</a>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Joined</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% users.forEach(user => { %>
+                    <tr>
+                        <td><%= user.full_name %></td>
+                        <td><%= user.email %></td>
+                        <td><span class="badge badge-info"><%= user.role %></span></td>
+                        <td><%= new Date(user.created_at).toLocaleDateString() %></td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="/admin/users/<%= user.id %>/edit" class="btn btn-sm btn-primary">Edit</a>
+                                <form action="/admin/users/<%= user.id %>/delete" method="POST" style="display: inline;">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')">Delete</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

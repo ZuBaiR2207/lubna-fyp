@@ -1,0 +1,74 @@
+<%- include('../partials/header', { title: 'Quiz Result - SLMS' }) %>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>Quiz Result</h2>
+            <p><strong>Quiz:</strong> <%= quiz.title %></p>
+            <p><strong>Course:</strong> <%= course.title %></p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3><%= attempt.score %> / <%= attempt.total_marks %></h3>
+                <p>Score</p>
+            </div>
+            <div class="stat-card">
+                <h3><%= attempt.percentage %>%</h3>
+                <p>Percentage</p>
+            </div>
+            <div class="stat-card">
+                <h3><%= new Date(attempt.attempted_at).toLocaleDateString() %></h3>
+                <p>Date</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Question Review</h2>
+        </div>
+
+        <% answers.forEach((answer, index) => { %>
+            <div class="quiz-question">
+                <h4>Question <%= index + 1 %> (<%= answer.marks %> marks)</h4>
+                <p><%= answer.question_text %></p>
+                <div class="quiz-option <%= answer.correct_answer === 'A' ? 'correct' : '' %> <%= answer.selected_answer === 'A' && !answer.is_correct ? 'incorrect' : '' %>">
+                    A. <%= answer.option_a %>
+                    <% if (answer.correct_answer === 'A') { %> ✓ Correct<% } %>
+                    <% if (answer.selected_answer === 'A' && !answer.is_correct) { %> ✗ Your Answer<% } %>
+                </div>
+                <div class="quiz-option <%= answer.correct_answer === 'B' ? 'correct' : '' %> <%= answer.selected_answer === 'B' && !answer.is_correct ? 'incorrect' : '' %>">
+                    B. <%= answer.option_b %>
+                    <% if (answer.correct_answer === 'B') { %> ✓ Correct<% } %>
+                    <% if (answer.selected_answer === 'B' && !answer.is_correct) { %> ✗ Your Answer<% } %>
+                </div>
+                <div class="quiz-option <%= answer.correct_answer === 'C' ? 'correct' : '' %> <%= answer.selected_answer === 'C' && !answer.is_correct ? 'incorrect' : '' %>">
+                    C. <%= answer.option_c %>
+                    <% if (answer.correct_answer === 'C') { %> ✓ Correct<% } %>
+                    <% if (answer.selected_answer === 'C' && !answer.is_correct) { %> ✗ Your Answer<% } %>
+                </div>
+                <div class="quiz-option <%= answer.correct_answer === 'D' ? 'correct' : '' %> <%= answer.selected_answer === 'D' && !answer.is_correct ? 'incorrect' : '' %>">
+                    D. <%= answer.option_d %>
+                    <% if (answer.correct_answer === 'D') { %> ✓ Correct<% } %>
+                    <% if (answer.selected_answer === 'D' && !answer.is_correct) { %> ✗ Your Answer<% } %>
+                </div>
+                <p>
+                    <strong>Your Answer:</strong> <%= answer.selected_answer || 'Not answered' %>
+                    <% if (answer.is_correct) { %>
+                        <span class="badge badge-success">Correct</span>
+                    <% } else { %>
+                        <span class="badge badge-danger">Incorrect</span>
+                    <% } %>
+                </p>
+            </div>
+        <% }); %>
+    </div>
+
+    <div class="action-buttons">
+        <a href="/student/courses/<%= course.id %>" class="btn btn-primary">Back to Course</a>
+        <a href="/student/results" class="btn">View All Results</a>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

@@ -1,0 +1,43 @@
+<%- include('../partials/header', { title: quiz.title + ' - SLMS' }) %>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2><%= quiz.title %></h2>
+            <p><strong>Course:</strong> <%= course.title %></p>
+            <p><%= quiz.description || 'No description' %></p>
+            <p><strong>Total Marks:</strong> <%= quiz.total_marks %></p>
+        </div>
+    </div>
+
+    <form action="/student/quizzes/<%= quiz.id %>/submit" method="POST" id="quizForm">
+        <% questions.forEach((question, index) => { %>
+            <div class="quiz-question">
+                <h4>Question <%= index + 1 %> (<%= question.marks %> marks)</h4>
+                <p><%= question.question_text %></p>
+                <div class="quiz-option">
+                    <input type="radio" name="answers[<%= question.id %>]" value="A" id="q<%= question.id %>_a" required>
+                    <label for="q<%= question.id %>_a">A. <%= question.option_a %></label>
+                </div>
+                <div class="quiz-option">
+                    <input type="radio" name="answers[<%= question.id %>]" value="B" id="q<%= question.id %>_b" required>
+                    <label for="q<%= question.id %>_b">B. <%= question.option_b %></label>
+                </div>
+                <div class="quiz-option">
+                    <input type="radio" name="answers[<%= question.id %>]" value="C" id="q<%= question.id %>_c" required>
+                    <label for="q<%= question.id %>_c">C. <%= question.option_c %></label>
+                </div>
+                <div class="quiz-option">
+                    <input type="radio" name="answers[<%= question.id %>]" value="D" id="q<%= question.id %>_d" required>
+                    <label for="q<%= question.id %>_d">D. <%= question.option_d %></label>
+                </div>
+            </div>
+        <% }); %>
+
+        <div class="action-buttons">
+            <button type="submit" class="btn btn-primary btn-block" onclick="return confirm('Are you sure you want to submit? You cannot change your answers after submission.')">Submit Quiz</button>
+        </div>
+    </form>
+</div>
+
+<%- include('../partials/footer') %>

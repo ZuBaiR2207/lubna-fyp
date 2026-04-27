@@ -1,0 +1,86 @@
+<%- include('../partials/header', { title: course.title + ' - SLMS' }) %>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2><%= course.title %></h2>
+            <p><strong>Teacher:</strong> <%= course.teacher_name %></p>
+            <p><%= course.description || 'No description' %></p>
+        </div>
+    </div>
+
+    <!-- Course Materials -->
+    <div class="card">
+        <div class="card-header">
+            <h2>Course Materials</h2>
+        </div>
+
+        <% if (materials.length === 0) { %>
+            <p>No materials available yet.</p>
+        <% } else { %>
+            <ul class="materials-list">
+                <% materials.forEach(material => { %>
+                    <li class="material-item">
+                        <div>
+                            <strong><%= material.title %></strong>
+                            <br>
+                            <small>Uploaded on <%= new Date(material.created_at).toLocaleDateString() %></small>
+                        </div>
+                        <div>
+                            <a href="/uploads/<%= material.file_path %>" target="_blank" class="btn btn-sm btn-primary">Download</a>
+                        </div>
+                    </li>
+                <% }); %>
+            </ul>
+        <% } %>
+    </div>
+
+    <!-- Quizzes -->
+    <div class="card">
+        <div class="card-header">
+            <h2>Quizzes</h2>
+        </div>
+
+        <% if (quizzes.length === 0) { %>
+            <p>No quizzes available yet.</p>
+        <% } else { %>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Quiz Title</th>
+                        <th>Description</th>
+                        <th>Total Marks</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% quizzes.forEach(quiz => { %>
+                        <tr>
+                            <td><strong><%= quiz.title %></strong></td>
+                            <td><%= quiz.description || 'No description' %></td>
+                            <td><%= quiz.total_marks %></td>
+                            <td>
+                                <% if (attemptMap[quiz.id]) { %>
+                                    <span class="badge badge-success">Completed</span>
+                                    <br><small>Score: <%= attemptMap[quiz.id].score %>/<%= attemptMap[quiz.id].total_marks %> (<%= attemptMap[quiz.id].percentage %>%)</small>
+                                <% } else { %>
+                                    <span class="badge badge-info">Not Attempted</span>
+                                <% } %>
+                            </td>
+                            <td>
+                                <% if (attemptMap[quiz.id]) { %>
+                                    <a href="/student/quizzes/<%= attemptMap[quiz.id].id %>/result" class="btn btn-sm btn-primary">View Result</a>
+                                <% } else { %>
+                                    <a href="/student/quizzes/<%= quiz.id %>/take" class="btn btn-sm btn-success">Take Quiz</a>
+                                <% } %>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        <% } %>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

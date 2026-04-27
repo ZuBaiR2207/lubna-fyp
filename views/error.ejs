@@ -1,0 +1,11 @@
+<%- include('partials/header', { title: 'Error - SLMS' }) %>
+
+<div class="container">
+    <div class="error-page">
+        <h2>⚠️ Error</h2>
+        <p class="error-message"><%= typeof error !== 'undefined' ? error : 'An unexpected error occurred' %></p>
+        <a href="/" class="btn btn-primary">Go to Home</a>
+    </div>
+</div>
+
+<%- include('partials/footer') %>
