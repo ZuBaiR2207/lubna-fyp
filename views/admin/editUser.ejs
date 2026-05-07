@@ -1,0 +1,62 @@
+<%- include('../partials/header', { title: 'Edit User - SLMS' }) %>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>Edit User</h2>
+        </div>
+
+        <% if (typeof error !== 'undefined' && error) { %>
+            <div class="alert alert-error"><%= error %></div>
+        <% } %>
+
+        <form action="/admin/users/<%= editUser.id %>/edit" method="POST">
+            <div class="form-group">
+                <label for="full_name">Full Name</label>
+                <input type="text" id="full_name" name="full_name" value="<%= editUser.full_name %>" required>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" value="<%= editUser.email %>" required>
+            </div>
+            <div class="form-group">
+                <label for="role">Role</label>
+                <select id="role" name="role" required>
+                    <option value="admin" <%= editUser.role === 'admin' ? 'selected' : '' %>>Administrator</option>
+                    <option value="teacher" <%= editUser.role === 'teacher' ? 'selected' : '' %>>Teacher</option>
+                    <option value="student" <%= editUser.role === 'student' ? 'selected' : '' %>>Student</option>
+                    <option value="parent" <%= editUser.role === 'parent' ? 'selected' : '' %>>Parent</option>
+                </select>
+            </div>
+            <div class="form-group" id="primaryLevelGroup" style="display: none;">
+                <label for="primary_level">Class level (students only)</label>
+                <select id="primary_level" name="primary_level">
+                    <option value="">Select Class 1–5</option>
+                    <% primaryLevelOptions.forEach(opt => { %>
+                        <option value="<%= opt.value %>" <%= Number(editUser.primary_level) === opt.value ? 'selected' : '' %>><%= opt.label %></option>
+                    <% }); %>
+                </select>
+            </div>
+            <div class="action-buttons">
+                <button type="submit" class="btn btn-primary">Update User</button>
+                <a href="/admin/users" class="btn">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+(function () {
+  var role = document.getElementById('role');
+  var group = document.getElementById('primaryLevelGroup');
+  var pl = document.getElementById('primary_level');
+  function toggle() {
+    var isStudent = role.value === 'student';
+    group.style.display = isStudent ? 'block' : 'none';
+    pl.required = isStudent;
+  }
+  role.addEventListener('change', toggle);
+  toggle();
+})();
+</script>
+<%- include('../partials/footer') %>

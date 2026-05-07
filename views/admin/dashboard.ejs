@@ -1,0 +1,67 @@
+<%- include('../partials/header', { title: 'Admin Dashboard - SLMS' }) %>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>Admin Dashboard</h2>
+            <p>System Overview and Statistics</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3><%= stats.admin_count %></h3>
+                <p>Administrators</p>
+            </div>
+            <div class="stat-card">
+                <h3><%= stats.teacher_count %></h3>
+                <p>Teachers</p>
+            </div>
+            <div class="stat-card">
+                <h3><%= stats.student_count %></h3>
+                <p>Students</p>
+            </div>
+            <div class="stat-card">
+                <h3><%= stats.parent_count %></h3>
+                <p>Parents</p>
+            </div>
+            <div class="stat-card">
+                <h3><%= stats.course_count %></h3>
+                <p>Courses</p>
+            </div>
+            <div class="stat-card">
+                <h3><%= stats.quiz_count %></h3>
+                <p>Quizzes</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Recent Users</h2>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Primary</th>
+                    <th>Joined</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% recentUsers.forEach(user => { %>
+                    <tr>
+                        <td><%= user.full_name %></td>
+                        <td><%= user.email %></td>
+                        <td><span class="badge badge-info"><%= user.role %></span></td>
+                        <td><%= user.role === 'student' ? primaryLevelLabel(user.primary_level) : '—' %></td>
+                        <td><%= new Date(user.created_at).toLocaleDateString() %></td>
+                    </tr>
+                <% }); %>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

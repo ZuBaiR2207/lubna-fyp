@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= typeof title !== 'undefined' ? title : 'SLMS - Learning Management System' %></title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <h1>SLMS</h1>
+            <p>Learning Management System</p>
+            <% if (typeof user !== 'undefined' && user) { %>
+                <div class="user-info">
+                    <span>Welcome, <%= user.full_name %></span>
+                    <% if (user.role === 'student' && user.primary_level) { %>
+                        <span class="role-badge" style="background: rgba(255,200,100,0.35);"><%= primaryLevelLabel(user.primary_level) %></span>
+                    <% } %>
+                    <span class="role-badge"><%= user.role %></span>
+                    <a href="/logout" class="logout-btn">Logout</a>
+                </div>
+            <% } %>
+        </div>
+    </header>
+    <nav>
+        <% if (typeof user !== 'undefined' && user) { %>
+            <% if (user.role === 'admin') { %>
+                <a href="/admin/dashboard">Dashboard</a>
+                <a href="/admin/users">Users</a>
+                <a href="/admin/courses">Courses</a>
+            <% } else if (user.role === 'teacher') { %>
+                <a href="/teacher/dashboard">Dashboard</a>
+                <a href="/teacher/courses">My Courses</a>
+            <% } else if (user.role === 'student') { %>
+                <a href="/student/dashboard">Dashboard</a>
+                <a href="/student/courses">My Courses</a>
+                <a href="/student/results">My Results</a>
+            <% } else if (user.role === 'parent') { %>
+                <a href="/parent/dashboard">Dashboard</a>
+            <% } %>
+        <% } else { %>
+            <a href="/">Home</a>
+            <a href="/login">Login</a>
+        <% } %>
+    </nav>

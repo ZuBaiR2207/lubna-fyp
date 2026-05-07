@@ -1,0 +1,46 @@
+<%- include('../partials/header', { title: 'My Results - SLMS' }) %>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>My Quiz Results</h2>
+        </div>
+
+        <% if (attempts.length === 0) { %>
+            <p>No quiz attempts yet.</p>
+        <% } else { %>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Quiz</th>
+                        <th>Course</th>
+                        <th>Score</th>
+                        <th>Percentage</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% attempts.forEach(attempt => { %>
+                        <tr>
+                            <td><strong><%= attempt.quiz_title %></strong></td>
+                            <td><%= attempt.course_title %></td>
+                            <td><%= attempt.score %> / <%= attempt.total_marks %></td>
+                            <td>
+                                <span class="badge <%= attempt.percentage >= 70 ? 'badge-success' : attempt.percentage >= 50 ? 'badge-info' : 'badge-danger' %>">
+                                    <%= attempt.percentage %>%
+                                </span>
+                            </td>
+                            <td><%= new Date(attempt.attempted_at).toLocaleString() %></td>
+                            <td>
+                                <a href="/student/quizzes/<%= attempt.id %>/result" class="btn btn-sm btn-primary">View Details</a>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        <% } %>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

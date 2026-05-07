@@ -1,0 +1,92 @@
+<%- include('../partials/header', { title: 'Student Dashboard - SLMS' }) %>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>Student Dashboard</h2>
+            <p>Welcome back, <%= user.full_name %>!
+                <% if (user.primary_level) { %>
+                    <span class="badge badge-info" style="margin-left: 0.5rem;"><%= primaryLevelLabel(user.primary_level) %></span>
+                <% } %>
+            </p>
+        </div>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>My Courses</h2>
+        </div>
+
+        <% if (courses.length === 0) { %>
+            <p>You are not enrolled in any courses yet.</p>
+        <% } else { %>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Course Title</th>
+                        <th>Level</th>
+                        <th>Teacher</th>
+                        <th>Description</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% courses.forEach(course => { %>
+                        <tr>
+                            <td><strong><%= course.title %></strong></td>
+                            <td><span class="badge badge-info"><%= primaryLevelLabel(course.primary_level) %></span></td>
+                            <td><%= course.teacher_name %></td>
+                            <td><%= course.description || 'No description' %></td>
+                            <td>
+                                <a href="/student/courses/<%= course.id %>" class="btn btn-sm btn-primary">View</a>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        <% } %>
+    </div>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Recent Quiz Results</h2>
+        </div>
+
+        <% if (recentAttempts.length === 0) { %>
+            <p>No quiz attempts yet.</p>
+        <% } else { %>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Quiz</th>
+                        <th>Course</th>
+                        <th>Score</th>
+                        <th>Percentage</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% recentAttempts.forEach(attempt => { %>
+                        <tr>
+                            <td><%= attempt.quiz_title %></td>
+                            <td><%= attempt.course_title %></td>
+                            <td><%= attempt.score %> / <%= attempt.total_marks %></td>
+                            <td>
+                                <span class="badge <%= attempt.percentage >= 70 ? 'badge-success' : attempt.percentage >= 50 ? 'badge-info' : 'badge-danger' %>">
+                                    <%= attempt.percentage %>%
+                                </span>
+                            </td>
+                            <td><%= new Date(attempt.attempted_at).toLocaleDateString() %></td>
+                            <td>
+                                <a href="/student/quizzes/<%= attempt.id %>/result" class="btn btn-sm btn-primary">View</a>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        <% } %>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

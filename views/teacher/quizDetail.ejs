@@ -1,0 +1,105 @@
+<%- include('../partials/header', { title: quiz.title + ' - SLMS' }) %>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2><%= quiz.title %></h2>
+            <p><%= quiz.description || 'No description' %></p>
+            <p><strong>Course:</strong> <%= course.title %></p>
+            <p><strong>Total Marks:</strong> <%= quiz.total_marks %></p>
+            <div class="action-buttons" style="margin-top: 1rem;">
+                <form action="/teacher/quizzes/<%= quiz.id %>/delete" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this quiz? All attempts will be removed.')">Delete Quiz</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="card">
+        <div class="card-header">
+            <h2>Quiz Statistics</h2>
+        </div>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3><%= stats.total_attempts || 0 %></h3>
+                <p>Total Attempts</p>
+            </div>
+            <div class="stat-card">
+                <h3><%= (Number(stats.average_score) || 0).toFixed(1) %>%</h3>
+                <p>Average Score</p>
+            </div>
+            <div class="stat-card">
+                <h3><%= stats.highest_score || 0 %>%</h3>
+                <p>Highest Score</p>
+            </div>
+            <div class="stat-card">
+                <h3><%= stats.lowest_score || 0 %>%</h3>
+                <p>Lowest Score</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Questions -->
+    <div class="card">
+        <div class="card-header">
+            <h2>Quiz Questions</h2>
+        </div>
+        <% questions.forEach((question, index) => { %>
+            <div class="quiz-question">
+                <h4>Question <%= index + 1 %> (<%= question.marks %> marks)</h4>
+                <p><%= question.question_text %></p>
+                <div class="quiz-option <%= question.correct_answer === 'A' ? 'correct' : '' %>">
+                    A. <%= question.option_a %>
+                </div>
+                <div class="quiz-option <%= question.correct_answer === 'B' ? 'correct' : '' %>">
+                    B. <%= question.option_b %>
+                </div>
+                <div class="quiz-option <%= question.correct_answer === 'C' ? 'correct' : '' %>">
+                    C. <%= question.option_c %>
+                </div>
+                <div class="quiz-option <%= question.correct_answer === 'D' ? 'correct' : '' %>">
+                    D. <%= question.option_d %>
+                </div>
+                <p><strong>Correct Answer: <%= question.correct_answer %></strong></p>
+            </div>
+        <% }); %>
+    </div>
+
+    <!-- Attempts -->
+    <div class="card">
+        <div class="card-header">
+            <h2>Student Attempts</h2>
+        </div>
+        <% if (attempts.length === 0) { %>
+            <p>No attempts yet.</p>
+        <% } else { %>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student</th>
+                        <th>Score</th>
+                        <th>Percentage</th>
+                        <th>Attempted At</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% attempts.forEach(attempt => { %>
+                        <tr>
+                            <td><%= attempt.student_name %></td>
+                            <td><%= attempt.score %> / <%= attempt.total_marks %></td>
+                            <td><%= attempt.percentage %>%</td>
+                            <td><%= new Date(attempt.attempted_at).toLocaleString() %></td>
+                            <td>
+                                <a href="/student/quizzes/<%= attempt.id %>/result" class="btn btn-sm btn-primary">View Details</a>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        <% } %>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>

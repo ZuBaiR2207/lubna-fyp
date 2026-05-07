@@ -1,0 +1,108 @@
+<%- include('../partials/header', { title: 'Parent Dashboard - SLMS' }) %>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2>Parent Dashboard</h2>
+            <p>Welcome back, <%= user.full_name %>!</p>
+        </div>
+    </div>
+
+    <% if (typeof message !== 'undefined' && message) { %>
+        <div class="alert alert-info"><%= message %></div>
+    <% } %>
+
+    <% if (students.length > 0) { %>
+        <div class="card">
+            <div class="card-header">
+                <h2>Linked Students</h2>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Class</th>
+                        <th>Email</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% students.forEach(student => { %>
+                        <tr>
+                            <td><strong><%= student.full_name %></strong></td>
+                            <td><span class="badge badge-info"><%= primaryLevelLabel(student.primary_level) %></span></td>
+                            <td><%= student.email %></td>
+                            <td>
+                                <a href="/parent/students/<%= student.id %>" class="btn btn-sm btn-primary">View Progress</a>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>Overall Statistics</h2>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3><%= stats.total_attempts || 0 %></h3>
+                    <p>Total Quiz Attempts</p>
+                </div>
+                <div class="stat-card">
+                    <h3><%= (Number(stats.average_score) || 0).toFixed(1) %>%</h3>
+                    <p>Average Score</p>
+                </div>
+                <div class="stat-card">
+                    <h3><%= stats.enrolled_courses || 0 %></h3>
+                    <p>Enrolled Courses</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>Recent Quiz Results</h2>
+            </div>
+            <% if (recentAttempts.length === 0) { %>
+                <p>No quiz attempts yet.</p>
+            <% } else { %>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Student</th>
+                            <th>Quiz</th>
+                            <th>Course</th>
+                            <th>Score</th>
+                            <th>Percentage</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% recentAttempts.forEach(attempt => { %>
+                            <tr>
+                                <td><%= attempt.student_name %></td>
+                                <td><%= attempt.quiz_title %></td>
+                                <td><%= attempt.course_title %></td>
+                                <td><%= attempt.score %> / <%= attempt.total_marks %></td>
+                                <td>
+                                    <span class="badge <%= Number(attempt.percentage) >= 70 ? 'badge-success' : Number(attempt.percentage) >= 50 ? 'badge-info' : 'badge-danger' %>">
+                                        <%= attempt.percentage %>%
+                                    </span>
+                                </td>
+                                <td><%= new Date(attempt.attempted_at).toLocaleDateString() %></td>
+                                <td>
+                                    <a href="/parent/quizzes/<%= attempt.id %>" class="btn btn-sm btn-primary">View</a>
+                                </td>
+                            </tr>
+                        <% }); %>
+                    </tbody>
+                </table>
+            <% } %>
+        </div>
+    <% } %>
+</div>
+
+<%- include('../partials/footer') %>

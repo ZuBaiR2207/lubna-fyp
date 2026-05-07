@@ -1,0 +1,160 @@
+<%- include('../partials/header', { title: course.title + ' - SLMS' }) %>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h2><%= course.title %></h2>
+            <p><span class="badge badge-info" style="font-size: 1rem;"><%= primaryLevelLabel(course.primary_level) %></span></p>
+            <p><%= course.description || 'No description' %></p>
+            <div class="action-buttons" style="margin-top: 1rem;">
+                <form action="/teacher/courses/<%= course.id %>/delete" method="POST" style="display: inline;">
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Delete this course? All materials, quizzes, and enrollments will be removed.')">Delete Course</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Course Materials -->
+    <div class="card">
+        <div class="card-header">
+            <h2>Course Materials</h2>
+        </div>
+
+        <div class="file-upload">
+            <h3>Upload New Material</h3>
+            <form action="/teacher/courses/<%= course.id %>/materials" method="POST" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="title">Material Title</label>
+                    <input type="text" id="title" name="title" required>
+                </div>
+                <div class="form-group">
+                    <label for="material">File (PDF, DOC, Images)</label>
+                    <input type="file" id="material" name="material" accept=".pdf,.doc,.docx,.jpg,.jpeg,.png,.gif" required>
+                </div>
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </form>
+        </div>
+
+        <% if (materials.length === 0) { %>
+            <p>No materials uploaded yet.</p>
+        <% } else { %>
+            <ul class="materials-list">
+                <% materials.forEach(material => { %>
+                    <li class="material-item">
+                        <div>
+                            <strong><%= material.title %></strong>
+                            <br>
+                            <small>Uploaded by <%= material.uploaded_by_name %> on <%= new Date(material.created_at).toLocaleDateString() %></small>
+                        </div>
+                        <div>
+                            <a href="/uploads/<%= material.file_path %>" target="_blank" class="btn btn-sm btn-primary">Download</a>
+                            <form action="/teacher/materials/<%= material.id %>/delete" method="POST" style="display: inline;">
+                                <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this material?')">Delete</button>
+                            </form>
+                        </div>
+                    </li>
+                <% }); %>
+            </ul>
+        <% } %>
+    </div>
+
+    <!-- Quizzes -->
+    <div class="card">
+        <div class="card-header">
+            <h2>Quizzes</h2>
+            <div class="action-buttons">
+                <a href="/teacher/courses/<%= course.id %>/quizzes/create" class="btn btn-primary">Create Quiz</a>
+            </div>
+        </div>
+
+        <% if (quizzes.length === 0) { %>
+            <p>No quizzes created yet.</p>
+        <% } else { %>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Quiz Title</th>
+                        <th>Description</th>
+                        <th>Total Marks</th>
+                        <th>Attempts</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% quizzes.forEach(quiz => { %>
+                        <tr>
+                            <td><strong><%= quiz.title %></strong></td>
+                            <td><%= quiz.description || 'No description' %></td>
+                            <td><%= quiz.total_marks %></td>
+                            <td><%= quiz.attempt_count || 0 %></td>
+                            <td>
+                                <a href="/teacher/quizzes/<%= quiz.id %>" class="btn btn-sm btn-primary">View</a>
+                                <form action="/teacher/quizzes/<%= quiz.id %>/delete" method="POST" style="display: inline;">
+                                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Delete this quiz? All attempts will be removed.')">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        <% } %>
+    </div>
+
+    <!-- Enrolled Students -->
+    <div class="card">
+        <div class="card-header">
+            <h2>Enrolled Students</h2>
+        </div>
+
+        <% if (students.length === 0) { %>
+            <p>No students enrolled yet.</p>
+        <% } else { %>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Class</th>
+                        <th>Email</th>
+                        <th>Enrolled Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% students.forEach(student => { %>
+                        <tr>
+                            <td><%= student.full_name %></td>
+                            <td><%= primaryLevelLabel(student.primary_level) %></td>
+                            <td><%= student.email %></td>
+                            <td><%= new Date(student.enrolled_at).toLocaleDateString() %></td>
+                        </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        <% } %>
+
+        <div style="margin-top: 1.5rem;">
+            <h3>Enroll New Student</h3>
+            <% if (course.primary_level) { %>
+                <p class="alert alert-info" style="margin-bottom: 1rem;">Only students in <strong><%= primaryLevelLabel(course.primary_level) %></strong> are listed. Add or edit a student’s level under Admin → Users if someone is missing.</p>
+            <% } %>
+            <form action="/teacher/courses/<%= course.id %>/enroll" method="POST">
+                <div class="form-group" style="display: flex; gap: 1rem; align-items: flex-end;">
+                    <div style="flex: 1;">
+                        <label for="student_id">Select Student</label>
+                        <select id="student_id" name="student_id" required>
+                            <option value="">Choose a student...</option>
+                            <% allStudents.forEach(student => { %>
+                                <% const isEnrolled = students.some(s => s.id === student.id); %>
+                                <% if (!isEnrolled) { %>
+                                    <option value="<%= student.id %>"><%= student.full_name %> — <%= primaryLevelLabel(student.primary_level) %> (<%= student.email %>)</option>
+                                <% } %>
+                            <% }); %>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Enroll</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<%- include('../partials/footer') %>
