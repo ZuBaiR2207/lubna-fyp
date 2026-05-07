@@ -1,4 +1,6 @@
 const mysql = require('mysql2');
+const fs = require('fs');
+const path = require('path');
 require('dotenv').config();
 
 const poolConfig = {
@@ -14,7 +16,12 @@ const poolConfig = {
 
 // Enable SSL for cloud databases like Aiven
 if (process.env.DB_SSL === 'true') {
-  poolConfig.ssl = { rejectUnauthorized: false };
+  if (process.env.DB_SSL_CA) {
+    const caPath = path.resolve(process.env.DB_SSL_CA);
+    poolConfig.ssl = { ca: fs.readFileSync(caPath) };
+  } else {
+    poolConfig.ssl = { rejectUnauthorized: false };
+  }
 }
 
 const pool = mysql.createPool(poolConfig);
